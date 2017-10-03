@@ -10,40 +10,50 @@
 #include snippets.d/tools
 
 %post
-cat <<- EOF > /etc/condor/config.d/50_titan
+cat <<- EOF > /etc/condor/config.d/00_titan
 	CONDOR_ADMIN = Undefined
 	ENABLE_KERNEL_TUNING = False
-	EXECUTE = \\$(LOCAL_DIR)/execute
-	LOG = \\$(LOCAL_DIR)
-	LOCK = \\$(LOCAL_DIR)
-	RUN = \\$(LOCAL_DIR)
-	SPOOL = \\$(LOCAL_DIR)/spool
-	HISTORY = \\$(LOCAL_DIR)/history
-	ALLOW = *
 	ALLOW_DAEMON = *
 EOF
-chmod 666 /etc/condor/config.d/50_titan
+
+cat <<- EOF > /etc/condor/config.d/50_worker
+	RUNBENCHMARKS = False
+	use feature : GPUs
+	GPU_DISCOVERY_EXTRA = -extra
+	SLOT_TYPE_1 = auto
+	SLOT_TYPE_1_PARTITIONABLE = TRUE
+	NUM_SLOTS_TYPE_1 = 1
+EOF
+
+chmod -R 666 /etc/condor/config.d/*
 
 %runscript
 set -x
-test -z "$MEMBERWORK" && export MEMBERWORK=/lustre/atlas/scratch/vbrik
-if [ -z "$2" ]; then
-	echo Not enough arguments
-	exit 1
-fi
-export _CONDOR_CONDOR_HOST=$2
-if [[ "$1" == "cm" ]]; then
-	export _CONDOR_DAEMON_LIST="MASTER SCHEDD COLLECTOR NEGOTIATOR"
-	export _CONDOR_LOCAL_DIR=\$MEMBERWORK/ast128/condor/$(hostname)-cm
-	export _CONDOR_NETWORK_INTERFACE=$2
-elif [[ "$1" == "wn" ]]; then
-	export _CONDOR_DAEMON_LIST="MASTER STARTD"
-	export _CONDOR_LOCAL_DIR=\$MEMBERWORK/ast128/condor/$(hostname)-wn
-	export _CONDOR_RUNBENCHMARKS=False
-	export _CONDOR_SCHEDD_HOST=$2
+mode=$1
+cm_addr=$2
+
+export _CONDOR_CONDOR_HOST=$cm_addr
+if [ -z "$MEMBERWORK" ]; then
+	export _CONDOR_LOCAL_DIR=/tmp/$(hostname)
 else
-	echo Unsupported mode
-	exit 1
+	export _CONDOR_LOCAL_DIR=$MEMBERWORK/ast128/condor/$(hostname)
 fi
-mkdir -p \$_CONDOR_LOCAL_DIR/{execute,spool}
+mkdir -p $_CONDOR_LOCAL_DIR
+export _CONDOR_LOG='$(LOCAL_DIR)'
+export _CONDOR_LOCK='$(LOCAL_DIR)'
+export _CONDOR_RUN='$(LOCAL_DIR)'
+
+if [[ "$mode" == "cm" ]]; then
+	export _CONDOR_NETWORK_INTERFACE=$cm_addr
+	export _CONDOR_DAEMON_LIST="MASTER SCHEDD COLLECTOR NEGOTIATOR"
+	export _CONDOR_HISTORY=$_CONDOR_LOCAL_DIR/history
+	export _CONDOR_SPOOL=$_CONDOR_LOCAL_DIR/spool
+	mkdir -p $_CONDOR_SPOOL
+elif [[ "$mode" == "wn" ]]; then
+	export _CONDOR_DAEMON_LIST="MASTER STARTD"
+	export _CONDOR_EXECUTE=/tmp/execute
+	mkdir -p $_CONDOR_EXECUTE
+else
+	echo Unsupported mode; exit 1
+fi
 set +x
