@@ -1,0 +1,22 @@
+%post
+cat <<- EOF >> /etc/profile.d/ps1.sh
+	if [[ \${EUID} == 0 ]] ; then
+    	export PS1="\e[37m\e[7m\$SINGULARITY_NAME\e[0m \[\033[01;34m\]\W\033[00m "
+	else
+    	export PS1="\e[37m\$SINGULARITY_NAME \[\033[01;34m\]\W\033[00m "
+	fi
+EOF
+
+cat <<- EOF >> /.singularity.d/env/99-base.sh
+	source /etc/profile.d/ps1.sh
+EOF
+
+cat <<- EOF >> /etc/virc
+set swapsync=
+set backupdir=/dev/shm
+set directory=/dev/shm
+EOF
+
+%environment
+export HISTFILE=/tmp/.bash_history_signularity
+export PATH=$PATH:/usr/sbin

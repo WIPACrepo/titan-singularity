@@ -1,0 +1,49 @@
+# vim:ft=sh:noexpandtab:ts=4
+# need real tabs for <<- to work
+
+#include snippets.d/centos6
+#include snippets.d/condor
+#include snippets.d/singularity
+#include snippets.d/titan
+#include snippets.d/sshd-titan
+#include snippets.d/preferences
+#include snippets.d/tools
+
+%post
+cat <<- EOF > /etc/condor/config.d/50_titan
+	CONDOR_ADMIN = Undefined
+	ENABLE_KERNEL_TUNING = False
+	EXECUTE = \\$(LOCAL_DIR)/execute
+	LOG = \\$(LOCAL_DIR)
+	LOCK = \\$(LOCAL_DIR)
+	RUN = \\$(LOCAL_DIR)
+	SPOOL = \\$(LOCAL_DIR)/spool
+	HISTORY = \\$(LOCAL_DIR)/history
+	ALLOW = *
+	ALLOW_DAEMON = *
+EOF
+chmod 666 /etc/condor/config.d/50_titan
+
+%runscript
+set -x
+test -z "$MEMBERWORK" && export MEMBERWORK=/lustre/atlas/scratch/vbrik
+if [ -z "$2" ]; then
+	echo Not enough arguments
+	exit 1
+fi
+export _CONDOR_CONDOR_HOST=$2
+if [[ "$1" == "cm" ]]; then
+	export _CONDOR_DAEMON_LIST="MASTER SCHEDD COLLECTOR NEGOTIATOR"
+	export _CONDOR_LOCAL_DIR=\$MEMBERWORK/ast128/condor/$(hostname)-cm
+	export _CONDOR_NETWORK_INTERFACE=$2
+elif [[ "$1" == "wn" ]]; then
+	export _CONDOR_DAEMON_LIST="MASTER STARTD"
+	export _CONDOR_LOCAL_DIR=\$MEMBERWORK/ast128/condor/$(hostname)-wn
+	export _CONDOR_RUNBENCHMARKS=False
+	export _CONDOR_SCHEDD_HOST=$2
+else
+	echo Unsupported mode
+	exit 1
+fi
+mkdir -p \$_CONDOR_LOCAL_DIR/{execute,spool}
+set +x

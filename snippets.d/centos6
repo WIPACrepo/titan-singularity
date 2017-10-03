@@ -1,0 +1,17 @@
+BootStrap: docker
+From: centos:6
+
+%post
+rm -f /etc/yum.repos.d/*
+function mkrepo() {
+	cat <<- EOF > /etc/yum.repos.d/$1.repo
+	[$1]
+	name=$1
+	baseurl=http://repos.icecube.wisc.edu/$2
+	gpgcheck=0
+	EOF
+}
+mkrepo sl-base sl/6.9/x86_64/os
+mkrepo sl-fastbugs sl/6.9/x86_64/updates/fastbugs
+mkrepo sl-security sl/6.9/x86_64/updates/security
+mkrepo epel epel/6.9/x86_64

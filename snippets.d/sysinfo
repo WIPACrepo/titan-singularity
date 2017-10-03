@@ -1,0 +1,21 @@
+%post
+yum install -y pciutils
+
+cat <<- EOF > /usr/local/bin/sysinfo
+	#!/bin/bash
+	set -x
+	date; echo
+	hostname; echo
+	timeout 10 find $(echo $PATH| tr : ' ' ); echo
+	timeout 10 find $(echo $LD_LIBRARY_PATH| tr : ' ' ); echo
+	env; echo
+	lspci; echo
+	module list; echo
+	df -h; echo
+	lsmod; echo
+	systool -m nvidia -v; echo
+	modinfo nvidia; echo
+	nvidia-smi; echo
+	date; echo
+EOF
+chmod +x /usr/local/bin/sysinfo

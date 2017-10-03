@@ -1,0 +1,5 @@
+yum install -y tmux
+
+cat <<- EOF > /etc/tmux.conf
+	bind-key -n C-w select-pane -t :.+
+EOF

@@ -1,0 +1,68 @@
+%post
+yum install -y openssh-server
+
+# without this, on titan, sshd will complain about 'invalid user vbrik'
+#groupadd --gid 25016 vbrik
+#groupadd --gid 24741 ast128
+#useradd vbrik --uid 13826 --home-dir / --gid 25016 --groups 24741 --no-create-home
+
+cat <<- EOF > /usr/local/bin/container_sshd.sh
+	#!/bin/bash
+	cp -r /usr/local/share/ssh /dev/shm
+	chmod 600 /dev/shm/ssh/*
+	/usr/sbin/sshd -f /dev/shm/ssh/sshd_config
+	sleep 600
+EOF
+chmod +x /usr/local/bin/container_sshd.sh
+
+mkdir /usr/local/share/ssh/
+cat <<- EOF > /usr/local/share/ssh/sshd_config
+	Protocol 2
+	Port 2222
+	AcceptEnv *
+	HostKey /dev/shm/ssh/insecure_ssh_host_rsa_key
+	AuthorizedKeysFile /dev/shm/ssh/authorized_keys
+	UsePAM no
+	UsePrivilegeSeparation no
+	StrictModes no
+	UseDNS no
+EOF
+
+cat <<- EOF > /usr/local/share/ssh/authorized_keys
+	ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQ1VZWyz3dxseW2FxNK5p2lslfjx4G4n++8m0Ia9pkQJBLZ7iCE090wF1GMgdtxsB8RQ5TBy0sRHzG2Wifm50LCm0WGIi0dTy2/nkjgp9QdQwDcQOumbymEG74MQ/PEtcuzaZkp+y7F9mwgfRO7RWzlKbrE0uMQPxiPQrQgTg5kOhsbrmIV7ZWMzR3QGE6QMsIhrknRK3GoDRRV7vi6uz8Tqv+W8PgD9IzR02HUuoEcG5S9vFdgRUb43tKAOJ6V1dluGOpRVbY83wERGStsdaEQ/gj791Q+Mpc2/Nl6H2JdYoW6GkQxrhp9XFzpfa1fnS+QJH1wTWvi8Xx6wBrvfgP vbrik-root
+	ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDtLucRdHATfqiFqV7ryDKUvzQjnLH5zS6TWu1AOHSdAcYEttP7UgXB4Le0biu65UT3yXwaizwh3ZtL+w4WlnXhc5hEBmJUKUkYh8wvgl6uMV3o3LWJe5AgjtNB5ucB6J5/mXuDbYz8BMcDrMD05j1kIDMXrgNnqyPMAMp+x8tzWZcp0p7y37r0LBvuXfuO4G1Zvwci0nw+K9crj7K3pzYABt236FcWgP3NU2jJqT7I2fWr0AG8AznYd9zBQcVMFl/DQ+OF7IaS5NXg5lnH/n3H01hLjZmfyYxkarpsDTKwav5prLjaixyKg6liet58QypY/SerTg77I6+UqzqC3VUF vbrik@titan-ext5
+EOF
+
+cat <<- EOF > /usr/local/share/ssh/insecure_ssh_host_rsa_key.pub
+	ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPixXhazFTWvUAOn2un3QGo7qWS8aHYkYBZ/70YU62uDQ4W4GC+Rx0Vu44bVRgo5m00NQaLXRjd+93k8BNIDN8axRH3ThreGmG0+WLheXKtQ/NdKgAHafqlA3Tka+sHRup+HRebk9JCS0u77OOg90YvkMp1btPYEc4Fv/I8CvJHMn3ZSUeGGqLOLlzt0l3kzfyZxHwUw7qjuO3pWQdFPjOldglgFS060Rdzoj/Q/RRl6+rWI2CB2zJpIPaO3aZRcAoa4+r2Gk04atouEqn03pP1xk+OqDyLZdmVKuKhs/BJPeGkZog8DwdcCzrxQjfpqJshNOxWZTaG6vaQsODXIiL vbrik@gentoo
+EOF
+
+cat <<- EOF > /usr/local/share/ssh/insecure_ssh_host_rsa_key
+	-----BEGIN RSA PRIVATE KEY-----
+	MIIEpQIBAAKCAQEAz4sV4WsxU1r1ADp9rp90BqO6lkvGh2JGAWf+9GFOtrg0OFuB
+	gvkcdFbuOG1UYKOZtNDUGi10Y3fvd5PATSAzfGsUR904a3hphtPli4XlyrUPzXSo
+	AB2n6pQN05GvrB0bqfh0Xm5PSQktLu+zjoPdGL5DKdW7T2BHOBb/yPAryRzJ92Ul
+	Hhhqizi5c7dJd5M38mcR8FMO6o7jt6VkHRT4zpXYJYBUtOtEXc6I/0P0UZevq1iN
+	ggdsyaSD2jt2mUXAKGuPq9hpNOGraLhKp9N6T9cZPjqg8i2XZlSriobPwST3hpGa
+	IPA8HXAs68UI36aibITTsVmU2hur2kLDg1yIiwIDAQABAoIBAHZ+6M09UHpRElVB
+	EAUlkS9BSAUL2pvtph6ja9PHwxNb9KTAyh8nb/GUuIqLEYPjpJyyJoeTsEIidh0F
+	xOPEIOFGmdu2GMJzi3ypewPAPUURP6aElm8Kf5bVVVeYdH6GWAchjf9kZ+xBSwTj
+	YtdZvmCkMOCv4TQeukryBrSJO9aki/LmMJtf0HvJgaqFFy7d11G+psQ0pr4xxpDB
+	8nQEuvvAsuGzghOMmunevl0oWgAPQcf/zVxtJrDcug+qMBSb+jAuoHc60gz2H0bl
+	WGHEhFlHJUNgioG2VwgJCboj4YdnIgOofb3tp1K592paLre3+t2GqfbZRUzqdjm5
+	ixss6XECgYEA7RKWKK+CBnu4RMMKne0xTo3qgOvMuJsKM5IOG2s7K/Lr9WZ5qx7E
+	hecXTS/BKP57oHQLqpbmMteAUUr1NmVFqj/Q7NsAYaw21IQnKK/jgk48B12Ho1ZS
+	PqfMNMOX6yOQI48nNTdv+yP/7pacKSoVBGY5U569e5OMiM9KMX1sEd8CgYEA4Bz2
+	ssAqBT0DKXkdhJWqBWstisyzeMJfO1fKkv66mHYp1V/6vvBYwMzhrW/frpLE6XEP
+	aXNe1ZtBuDqLxvNKtWZHdvnC/VBfjXKmSryrRy3R3hjCxKvKwelD8JrOr1Z+CSJZ
+	pmW1QRFLEKthbuC4lUxNOlUdmJVV0tgSI4MnltUCgYEAzH2lzH5nN9RsA9QBSmwY
+	hdvgFUhQFESXrhgj1v7N0YD+i3TTKgmmFqJY9RlmEkhAtwyiK4lyExTT+Esh7MO6
+	LbpSKpxVXerAeNttM6lUI0f8e5Xvs7J3ytfOSw0T851/bUzD0yF4lDZfQpvjI5bK
+	/jp25GweoYOKS1ASfVHkcB0CgYEAolH4EFGEXdTp9GDnkz7/LPuKucw3dRB6/zU/
+	4KWkqoZzGDtzFlZoQgRitEaiIQPmoRmlSwAnwNi5ieDFmmxeQPJ6cl7F7skG3CEc
+	9maeO2ihZ5ZRgzbWHQqBjcPiTTZ9BMqfWhiyZhVLZCBs6mzS5Deme8hoLjqDNboP
+	sS7uPp0CgYEA6wAPjVZeg8G8KE4nHsJVBV0lK/h3N7S0z978rRgc3bqbdO1SYaq3
+	uglJQCgb+V/khrbmzHKfOzrm7Xc/zQlvcOANsVTjoYl7eHX+9nTGrdsY8ZcYawgH
+	Ea7orU9KUyIjxkwmh8M68n1V11eqxazYwsf6PJET026RR1oAvb+jXQ8=
+	-----END RSA PRIVATE KEY-----
+EOF

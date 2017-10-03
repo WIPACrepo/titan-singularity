@@ -1,0 +1,17 @@
+cat <<- EOF > /etc/profile.d/aliases.sh
+alias g='grep --color=auto'
+alias gi='grep --color=auto -i'
+alias gir='grep --color=auto -ir'
+alias gr='grep --color=auto -r'
+alias grep='grep --colour=auto'
+alias l='ls -lh'
+alias la='ls -lah'
+alias lart='ls -larth'
+alias less='less -i'
+alias ls='ls --color=auto'
+EOF
+
+cat <<- EOF >> /etc/inputrc
+"\ek": history-search-backward
+"\ej": history-search-forward
+EOF

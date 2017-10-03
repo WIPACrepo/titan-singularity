@@ -1,0 +1,15 @@
+# also, see https://github.com/olcf/SingularityTools/blob/master/Titan/TitanPrep.sh
+# and https://github.com/olcf/SingularityTools/blob/master/Titan/TitanBootstrap.sh
+
+%post
+# Directories singularity on Titan is configured to mount by default
+mkdir -p /opt/cray /var/spool/alps /var/opt/cray /lustre/atlas{,1,2}
+mkdir -p /sw /ccs/sw /autofs/{nccs-svm1_sw,nccs-svm1_proj}
+mkdir -p /ccs/proj
+touch /.singularity.d/env/98-OLCF.sh /usr/bin/nvidia-smi
+
+# Currently, looks like "config password" is set to false on titan.
+# A lot of things will break without this
+groupadd --gid 25016 vbrik
+groupadd --gid 24741 ast128
+useradd vbrik --uid 13826 --home-dir / --gid 25016 --groups 24741 --no-create-home
