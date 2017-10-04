@@ -1,9 +1,8 @@
 #!/bin/bash
+set -x
 src=$1
-size=${2:-500}
 img=${src%.*}
 
-set -x
 ./concat.sh $src > scratch/$img.def && \
 	(sudo rm -rf scratch/$img; \
 	mkdir scratch/$img && \
