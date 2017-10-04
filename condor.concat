@@ -8,6 +8,7 @@
 #include snippets.d/sshd-titan
 #include snippets.d/preferences
 #include snippets.d/tools
+#include snippets.d/cuda
 
 %post
 cat <<- EOF > /etc/condor/config.d/00_titan
@@ -31,6 +32,7 @@ chmod -R 666 /etc/condor/config.d/*
 set -x
 mode=$1
 cm_addr=$2
+live=$3
 
 export _CONDOR_CONDOR_HOST=$cm_addr
 if [ -z "$MEMBERWORK" ]; then
@@ -55,5 +57,8 @@ elif [[ "$mode" == "wn" ]]; then
 	mkdir -p $_CONDOR_EXECUTE
 else
 	echo Unsupported mode; exit 1
+fi
+if ! [ -z "$live" ]; then
+	condor_master -f
 fi
 set +x
