@@ -12,7 +12,7 @@ touch /.singularity.d/env/98-OLCF.sh
 # A lot of things will break without this
 groupadd --gid 25016 vbrik
 groupadd --gid 24741 ast128
-useradd vbrik --uid 13826 --home-dir / --gid 25016 --groups 24741 --no-create-home
+useradd vbrik --uid 13826 --home-dir /tmp --gid 25016 --groups 24741 --no-create-home
 
 %environment
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH-}:/opt/cray/nvidia/352.101-1_1.0502.2465.0.0.gem/lib64
