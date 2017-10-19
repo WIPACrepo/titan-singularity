@@ -9,6 +9,7 @@
 #include snippets.d/preferences
 #include snippets.d/tools
 #include snippets.d/cuda
+#include snippets.d/cvmfs
 
 %post
 cat <<- EOF > /etc/condor/config.d/00_titan

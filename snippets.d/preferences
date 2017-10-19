@@ -1,3 +1,4 @@
+%post
 cat <<- EOF > /etc/profile.d/aliases.sh
 alias g='grep --color=auto'
 alias gi='grep --color=auto -i'
