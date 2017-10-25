@@ -1,2 +1,2 @@
 %post
-yum install -y tree strace wget nc nmap screen ping time pciutils
+yum install -y tree strace wget nc nmap screen ping time pciutils dstat ftop nethogs pv
