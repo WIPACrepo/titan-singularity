@@ -1,10 +1,10 @@
 %post
 yum install -y freetype # dependency for some /cvmfs software
 mkdir -p /cvmfs
-mkdir -p /etc/OpenCL
-echo libamdocl32.so >  /etc/OpenCL/amdocl32.icd
-echo libamdocl64.so >  /etc/OpenCL/amdocl64.icd
-echo libnvidia-opencl.so.1 > /etc/OpenCL/nvidia.icd
+mkdir -p /etc/OpenCL/vendors
+echo libamdocl32.so >  /etc/OpenCL/vendors/amdocl32.icd
+echo libamdocl64.so >  /etc/OpenCL/vendors/amdocl64.icd
+echo libnvidia-opencl.so.1 > /etc/OpenCL/vendors/nvidia.icd
 
 %environment
 # currently cvmfs's setup.sh doesn't set LD_LIBRARY_PATH properly on Titan
