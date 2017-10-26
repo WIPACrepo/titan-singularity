@@ -6,6 +6,13 @@ echo libamdocl32.so >  /etc/OpenCL/vendors/amdocl32.icd
 echo libamdocl64.so >  /etc/OpenCL/vendors/amdocl64.icd
 echo libnvidia-opencl.so.1 > /etc/OpenCL/vendors/nvidia.icd
 
+# Titan uses LD_AUDIT=/sw/xk6/singularity/lib/libdl-intercept.so to subsitute-in
+# Cray's MPICH libraries. LD_AUDIT doesn't work with libraries containing no code,
+# which breaks our OpenCL applications.
+cat <<- EOF >> /.singularity.d/env/99-base.sh
+	unset LD_AUDIT
+EOF
+
 %environment
 # currently cvmfs's setup.sh doesn't set LD_LIBRARY_PATH properly on Titan
 export LD_LIBRARY_PATH=/cvmfs/icecube.opensciencegrid.org/distrib/OpenCL_RHEL_6_x86_64/lib/RHEL_6_x86_64:$LD_LIBRARY_PATH
