@@ -1,2 +1,4 @@
 %post
-yum install -y tree strace wget nc nmap screen ping time pciutils dstat ftop nethogs pv ltrace
+yum install -y tree strace wget nc nmap screen iputils time pciutils dstat
+yum install -y bind-utils sysstat collectl ftop nethogs pv ltrace
+yum install -y openssh-clients #for collectl's colmux

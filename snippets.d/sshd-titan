@@ -11,7 +11,6 @@ cat <<- EOF > /usr/local/bin/container_sshd.sh
 	cp -r /usr/local/share/ssh /dev/shm
 	chmod 600 /dev/shm/ssh/*
 	/usr/sbin/sshd -f /dev/shm/ssh/sshd_config
-	sleep 600
 EOF
 chmod +x /usr/local/bin/container_sshd.sh
 
