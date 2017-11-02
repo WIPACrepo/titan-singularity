@@ -5,7 +5,7 @@
 #include snippets.d/condor
 #include snippets.d/singularity
 #include snippets.d/titan
-#include snippets.d/sshd-titan
+#include snippets.d/titan-sshd
 #include snippets.d/preferences
 #include snippets.d/tools
 #include snippets.d/cuda

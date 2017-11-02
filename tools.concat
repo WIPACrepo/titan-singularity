@@ -3,8 +3,8 @@
 #include snippets.d/centos6
 #include snippets.d/singularity
 #include snippets.d/titan
+#include snippets.d/titan-sshd
 #include snippets.d/preferences
-#include snippets.d/sshd-titan
 #include snippets.d/sysinfo
 #include snippets.d/tmux
 #include snippets.d/tools
