@@ -8,9 +8,9 @@ yum install -y openssh-server
 
 cat <<- EOF > /usr/local/bin/titan-sshd
 	#!/bin/bash
-	cp -r /usr/local/share/ssh /dev/shm
-	chmod 600 /dev/shm/ssh/*
-	/usr/sbin/sshd -f /dev/shm/ssh/sshd_config
+	cp -r /usr/local/share/ssh /tmp
+	chmod 600 /tmp/ssh/*
+	/usr/sbin/sshd -f /tmp/ssh/sshd_config
 EOF
 chmod +x /usr/local/bin/titan-sshd
 
@@ -19,8 +19,8 @@ cat <<- EOF > /usr/local/share/ssh/sshd_config
 	Protocol 2
 	Port 2222
 	AcceptEnv *
-	HostKey /dev/shm/ssh/insecure_ssh_host_rsa_key
-	AuthorizedKeysFile /dev/shm/ssh/authorized_keys
+	HostKey /tmp/ssh/insecure_ssh_host_rsa_key
+	AuthorizedKeysFile /tmp/ssh/authorized_keys
 	UsePAM no
 	UsePrivilegeSeparation no
 	StrictModes no

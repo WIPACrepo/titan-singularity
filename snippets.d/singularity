@@ -13,8 +13,8 @@ EOF
 
 cat <<- EOF >> /etc/virc
 set swapsync=
-set backupdir=/dev/shm
-set directory=/dev/shm
+set backupdir=/tmp
+set directory=/tmp
 EOF
 
 %environment
