@@ -21,3 +21,5 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH-}:/opt/cray/nvidia/352.101-1_1.0502.246
 export PATH=${PATH-}:/opt/cray/nvidia/352.101-1_1.0502.2465.0.0.gem/bin
 #export LD_LIBRARY_PATH=${LD_LIBRARY_PATH-}:/opt/nvidia/cudatoolkit7.5/7.5.18-1.0502.10743.2.1/lib64
 #export PATH=${PATH-}:/opt/nvidia/cudatoolkit7.5/7.5.18-1.0502.10743.2.1/bin:/opt/nvidia/cudatoolkit7.5/7.5.18-1.0502.10743.2.1/libnvvp
+# Titan uses lessopen.sh, which I think is from an old version of less
+export LESSOPEN="|/usr/bin/lesspipe.sh %s"
