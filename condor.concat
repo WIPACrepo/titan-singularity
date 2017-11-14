@@ -14,5 +14,6 @@
 %post
 cat <<- EOF > /etc/condor/condor_config.local
 	# Just setting _CONDOR_LOCAL_CONFIG_DIR is not enough (8.7.4)
-	LOCAL_CONFIG_DIR = \$ENV(_CONDOR_LOCAL_CONFIG_DIR)
+	LOCAL_CONFIG_DIR = \\$ENV(_CONDOR_LOCAL_CONFIG_DIR)
 EOF
+chmod 666 /etc/condor/condor_config.local
