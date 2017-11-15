@@ -1,0 +1,22 @@
+# vim:ft=sh:noexpandtab:ts=4
+# need real tabs for <<- to work
+
+#include snippets.d/centos6
+#include snippets.d/singularity
+#include snippets.d/titan
+#include snippets.d/preferences
+#include snippets.d/cvmfs
+
+%post
+yum install -y strace ltrace
+
+%environment
+# probably not necessary anymore
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CRAY_NVIDIA_DRIVER_LIB_DIR
+export PATH=$PATH:$CRAY_NVIDIA_DRIVER_BIN_DIR
+
+%runscript
+eval $(/cvmfs/icecube.opensciencegrid.org/py2-v2/setup.sh)
+/cvmfs/icecube.opensciencegrid.org/distrib/OpenCL_Linux/bin/x86_64/clinfo
+proj=$SROOT/metaprojects/simulation/V05-01-02
+time $proj/env-shell.sh $proj/clsim/resources/scripts/benchmark.py -n 30 --minimal-gcd -d 0
