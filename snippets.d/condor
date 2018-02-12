@@ -6,4 +6,4 @@ cat <<- EOF > /etc/yum.repos.d/condor.repo
 	gpgcheck=0
 EOF
 # openssh-clients for interactive jobs
-yum install -y condor openssh-clients
+yum install -y condor-8.7.6-1.el6.x86_64 openssh-clients
