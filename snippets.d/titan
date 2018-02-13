@@ -6,6 +6,7 @@
 mkdir -p /opt/cray /var/spool/alps /var/opt/cray /lustre/atlas{,1,2}
 mkdir -p /sw /autofs/{nccs-svm1_sw,nccs-svm1_proj}
 mkdir -p /ccs/{sw,proj}
+mkdir -p /var/lib/hugetlbfs
 touch /.singularity.d/env/98-OLCF.sh
 
 # Currently, looks like singularity's "config password" is set to false on titan.
