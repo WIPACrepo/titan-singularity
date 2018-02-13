@@ -17,6 +17,9 @@ useradd vbrik --uid 13826 --gid 25016 --groups 24741 --no-create-home \
 				--home-dir /lustre/atlas1/ast128/scratch/vbrik
 
 %environment
+# Fix very volumous linker warnings about failures to preload /usr/local/lib/libset_pid.so
+unset LD_PRELOAD
+
 export HOME=/lustre/atlas1/ast128/scratch/vbrik
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH-}:/opt/cray/nvidia/352.101-1_1.0502.2465.0.0.gem/lib64
 export PATH=${PATH-}:/opt/cray/nvidia/352.101-1_1.0502.2465.0.0.gem/bin
@@ -24,6 +27,3 @@ export PATH=${PATH-}:/opt/cray/nvidia/352.101-1_1.0502.2465.0.0.gem/bin
 #export PATH=${PATH-}:/opt/nvidia/cudatoolkit7.5/7.5.18-1.0502.10743.2.1/bin:/opt/nvidia/cudatoolkit7.5/7.5.18-1.0502.10743.2.1/libnvvp
 # Titan uses lessopen.sh, which I think is from an old version of less
 export LESSOPEN="|/usr/bin/lesspipe.sh %s"
-
-# fix constant linker warnings about failures to preload /usr/local/lib/libset_pid.so
-unset LD_PRELOAD
